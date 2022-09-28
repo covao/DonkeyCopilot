@@ -1,0 +1,318 @@
+<html>
+<head>
+<style>
+html,body,main {
+	margin: 0;
+  	overscroll-behavior: none;
+	overflow: hidden;
+	height 100%;
+}
+input[type="range"]::-webkit-slider-thumb {
+	-webkit-appearance: none; 
+	background: #70ad47; 
+	width: 20%; 
+	height: 80%; 
+	border-radius: 30%;
+</style>
+<script src="./p5.min.js"></script>
+</head>
+<body>
+<main>
+</main>
+
+<script>
+function setup(){
+	//raspIP='192.168.0.101:8887'; //For debug on host pc
+	raspIP=location.host;
+
+	document.body.style.overflow = "hidden";
+	document.body.style.height = "100%";
+
+	// Create Y-slider
+	ySlider = createSlider(-1.0, 1.0, 0,0.01);
+	ySlider.elt.style.opacity=0.6;
+	ySlider.elt.style.webkitAppearance='none';
+	ySlider.elt.style.transform='rotate(270deg)'
+	ySlider.elt.style.backgroundColor='#696969';
+	ySlider.elt.style.borderRadius='40px';
+	ySlider.elt.addEventListener('change', ReleaseY);
+	xSlider = createSlider(-1.0, 1.0, 0,0.01);
+
+	// Create X-slider
+	xSlider.elt.style.opacity=0.6;
+	xSlider.elt.style.webkitAppearance='none';
+	xSlider.elt.style.borderRadius='40px';
+	xSlider.elt.style.backgroundColor='#696969';
+	xSlider.elt.addEventListener('change', ReleaseX);
+
+	// Create full dcreen button
+	buttonFS= createButton('|&nbsp;&nbsp;&nbsp|');
+	buttonFS.elt.style.borderRadius='20px';
+	buttonFS.elt.style.color='#000000';
+	buttonFS.elt.backgroundColor='#696969';
+	buttonFS.elt.style.opacity=0.5;
+	buttonFS.elt.style.fontSize='32';
+	buttonFS.mousePressed(changeFS);
+
+	// create Rec button
+	buttonRec = createButton('REC');
+	buttonRec.elt.style.borderRadius='20px';
+	buttonRec.elt.style.color='#000000';
+	buttonRec.elt.backgroundColor='#696969';
+	buttonRec.elt.style.opacity=0.5;
+	buttonRec.mousePressed(changeREC);
+
+	// create AutoPilot button
+	buttonDM = createButton('Manual');
+	buttonDM.elt.style.borderRadius='20px';
+	buttonDM.elt.style.color='#000000';
+	buttonDM.elt.backgroundColor='#696969';
+	buttonDM.elt.style.opacity=0.5;
+	buttonDM.mousePressed(changeDM);
+
+	// create Set Max accel button
+	buttonSA = createButton('Set Max');
+	buttonSA.elt.style.borderRadius='20px';
+	buttonSA.elt.style.color='#000000';
+	buttonSA.elt.backgroundColor='#696969';
+	buttonSA.elt.style.opacity=0.5;
+	buttonSA.touchStarted(changeSA);
+
+	DM='user';// maual
+	ButtonX0 = false;
+	ButtonB0 = false;
+	AccelStep = 0.05;
+	SteeringStep = 0.05;
+	RecSW = false;
+	MaxAccel = 100;
+
+	sc=(windowWidth/1920); //Screen Scale
+	canv=createCanvas(windowWidth, windowHeight);
+	img = new Image();
+	img.src ='http://'+raspIP+'/video';
+
+	socket = new WebSocket('ws://'+raspIP+'/wsDrive');
+	window.addEventListener('touchmove', function(event) {
+	    event.preventDefault();
+	});
+
+	//	socket.onmessage = function (event) {
+	//		console.log(event.data);
+	//	}
+	//frameRate(20);
+
+}
+
+function draw() { //Draw Loop
+	// Display video
+	background(0);
+	let ctx = canv.canvas.getContext("2d");
+	ctx.drawImage(img,0 , 0,img.width,img.height, 00*sc, 0, 1920*sc, 1080*sc);
+
+	//Get GamePad state
+	Pads = navigator.getGamepads(); 
+	if (Pads[0]){ //If existing GamePad
+		deadband=0.05
+    	AnalogX =  Pads[0].axes[2];
+		if (abs(AnalogX)<deadband){
+			AnalogX = 0;
+		}
+    	AnalogY = -Pads[0].axes[1];
+		if (abs(AnalogY)<deadband){
+			AnalogY = 0;
+		}
+		ButtonA = Pads[0].buttons[0].value==1;
+		ButtonB = Pads[0].buttons[1].value==1;
+		ButtonX = Pads[0].buttons[3].value==1;
+		ButtonY = Pads[0].buttons[4].value==1;
+		ButtonDir = abs(int((Pads[0].axes[9]) * 7 / 2 + 0.5)-5);//Cross button
+		ButtonLeft = ButtonDir==2;
+		ButtonRight = ButtonDir==5;
+	
+		if (ButtonLeft){//Cross Button
+			xSlider.value(xSlider.value()-SteeringStep);
+		}else if (ButtonRight){
+			xSlider.value(xSlider.value()+SteeringStep);
+		}else{
+			xSlider.value(AnalogX); //Analog Stick R
+		}
+
+		if (ButtonY){
+			ySlider.value(ySlider.value()+AccelStep );
+		}else if(ButtonA){
+			ySlider.value(ySlider.value()-AccelStep );
+		}else{
+    		ySlider.value(AnalogY); //Analog Stick L
+		}
+
+		if(ButtonX && !ButtonX0){
+			changeDM();
+		}
+		ButtonX0 = ButtonX;
+		if(ButtonB && !ButtonB0){
+			changeREC();
+		}
+		ButtonB0 = ButtonB;
+	}
+
+	//Set Slider UI
+	ySlider.position(100*sc, 550*sc);
+	ySlider.size(400*sc,200*sc);
+	xSlider.position(1350*sc, 550*sc);
+	xSlider.size(400*sc,200*sc);
+
+  	//Set Button UI
+	buttonFS.position(1800*sc, 10*sc);//Auto/Manual 
+	buttonFS.size(100*sc,100*sc);
+	buttonFS.elt.style.fontSize=48*sc;
+	buttonDM.position(550*sc, 750*sc);
+	buttonDM.size(700*sc,100*sc);
+	buttonDM.elt.style.fontSize=48*sc;
+	buttonRec.position(1500*sc, 10*sc);//Auto/Manual 
+	buttonRec.size(200*sc,100*sc);
+	buttonRec.elt.style.fontSize=48*sc;
+	buttonSA.position(1100*sc, 600*sc);//Auto/Manual 
+	buttonSA.size(150*sc,100*sc);
+	buttonSA.elt.style.fontSize=32*sc;
+
+	if(ySlider.value()!=0 && DM=='local'){//Set AutoSteering mode
+		DM='local_angle';
+		buttonDM.elt.textContent="Auto Steering"
+	}
+	if(xSlider.value()!=0 && DM!='user'){//Set Manual mode
+		DM='user';
+		buttonDM.elt.textContent="Manual"
+	}
+
+	// Display Text
+	textAlign(CENTER, CENTER);
+	fill(200,200,200,200);
+  	strokeJoin(ROUND);
+  	stroke(0, 0, 0);
+	strokeWeight(4);
+
+	// Display Caption
+	push();
+	fill(200);
+ 	textAlign(CENTER,CENTER);
+	textStyle(ITALIC);
+	textSize(48*sc);
+	text('Donkey Copilot' ,900*sc, 50*sc);
+	textSize(20*sc);
+	strokeWeight(2);
+	text('Power by TatamiRacer' ,980*sc, 100*sc);
+	pop();
+	
+	// Display FPS / MAX Accel
+	push();
+	textSize(32*sc);
+	text("FPS "+str(int(frameRate())) ,150*sc, 20*sc);
+	text(str(MaxAccel) ,1170*sc, 570*sc);
+	pop();
+
+	lv = ySlider.value()*100;//Slider Level
+	if(abs(lv)>MaxAccel){
+		lv = Math.sign(lv)*abs(MaxAccel);
+	}
+	
+	if(DM=='user'){ //Manual mode
+		//Accel
+		push();
+		textStyle(NORMAL);
+		textSize(98*sc);
+		stroke(0, 0, 0, 255);
+		if(lv>=0){	
+			fill(255, 255, 255, 140);
+		}else{
+			fill(255, 0, 0,140);
+		}
+		text(int (lv),900*sc, 650*sc);//Accel
+
+		noFill();
+		strokeCap(SQUARE);
+		strokeWeight(40);
+		stroke(0, 255, 0, 200);
+		arc(900*sc, 650*sc, 320*sc, 200*sc, PI, PI+PI*abs(lv)*0.01);//Low Accel
+		if(abs(lv)>50){//Mid Accel
+			stroke(255, 255, 0, 200);
+			arc(900*sc, 650*sc, 320*sc, 200*sc, PI+PI*0.5, PI+PI*abs(lv)*0.01);
+		}
+		if(abs(lv)>80){//High Accel
+			stroke(255,0,0, 200);
+			arc(900*sc, 650*sc, 320*sc, 200*sc, PI+PI*0.8, PI+PI*abs(lv)*0.01);
+		}
+		pop();
+
+		// Direction UI
+		push();
+		strokeWeight(2);
+		translate(900*sc, 200*sc);
+
+		textStyle(NORMAL);
+		textSize(40*sc);
+		text(int (xSlider.value()*100),0*sc, 50*sc);
+		stroke(0, 150, 0, 140);
+		noFill();
+		arc(0, 0, 180*sc, 150*sc, PI, PI/2+PI*1.5);
+		fill(0, 150, 0, 100);
+		rotate((PI /5) * xSlider.value());
+		translate(0, -30*sc);
+		triangle(0, -40*sc, -20*sc, 40*sc, 20*sc, 40*sc);
+		pop();
+	}
+
+	//Send message to DonkeyCar
+	data = JSON.stringify({ 'angle': xSlider.value(), //Steering(-1..+1)
+	'throttle':lv/100, //Accel(-1..+1)
+	'drive_mode': DM, //user|local|local_angle
+	'recording': RecSW}) //true|false
+	try{
+		socket.send(data);
+	}catch{
+	}
+}
+
+function ReleaseX(){ //Slider release 
+	xSlider.value(0);
+}
+function ReleaseY(){ //Slider release
+	ySlider.value(0);
+}
+
+function changeFS(){ //Full screen button
+	let fs = fullscreen();
+	fullscreen(!fs);
+}
+function changeDM(){ //Drive mode button
+	if(DM=="local" || DM=='local_angle'){
+		DM='user';
+		buttonDM.elt.textContent="Manual"
+	}else{
+		DM='local';
+		buttonDM.elt.textContent="Auto"
+	}
+}
+function changeREC(){ //Rec button
+	RecSW=!RecSW;
+	if(RecSW){
+		buttonRec.elt.style.backgroundColor='#dc143c';
+	}else{
+		buttonRec.elt.style.backgroundColor='#ffffff';
+	}
+}
+function changeSA(){ //Set Max accel level
+	if(abs(ySlider.value())>0.1){
+		MaxAccel=int(abs(ySlider.value())*100);
+	}else{
+		MaxAccel=100;
+	}
+}
+
+function windowResized() { // Resize
+	resizeCanvas(windowWidth, windowHeight);
+	sc=(windowWidth/1920);
+}
+
+</script>
+</body>
+</html>
