@@ -46,7 +46,7 @@ function setup(){
 	xSlider.elt.addEventListener('change', ReleaseX);
 
 	// Create full dcreen button
-	buttonFS= createButton('|&nbsp;&nbsp;&nbsp|');
+	buttonFS= createButton('FS');
 	buttonFS.elt.style.borderRadius='20px';
 	buttonFS.elt.style.color='#000000';
 	buttonFS.elt.backgroundColor='#696969';
@@ -163,7 +163,7 @@ function draw() { //Draw Loop
 
   	//Set Button UI
 	buttonFS.position(1800*sc, 10*sc);//Auto/Manual 
-	buttonFS.size(100*sc,100*sc);
+	buttonFS.size(100*sc,120*sc);
 	buttonFS.elt.style.fontSize=48*sc;
 	buttonDM.position(550*sc, 750*sc);
 	buttonDM.size(700*sc,100*sc);
@@ -205,7 +205,7 @@ function draw() { //Draw Loop
 	
 	// Display FPS / MAX Accel
 	push();
-	textSize(32*sc);
+	textSize(48*sc);
 	text("FPS "+str(int(frameRate())) ,150*sc, 20*sc);
 	text(str(MaxAccel) ,1170*sc, 570*sc);
 	pop();
