@@ -1,5 +1,5 @@
 # DonkeyCopilot
-[日本語(Google Translate)](https://github.com/covao/DonkeyCopilot/blob/main/README.md?)
+[日本語 Japanese(Google Translate)](https://github-com.translate.goog/covao/DonkeyCopilot/blob/main/README.md?)
 
 "DonkeyCopilot" is controller application for DonkeyCar. 
 - Browser based UI suitable for smartphones
