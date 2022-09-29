@@ -10,8 +10,8 @@
 # Installation
 Copy two files into DonkeyCar project folder.  
 /donkeycar/parts/web_controller/templates/static
-- copilot.html
-- p5.min.js
+- [copilot.html](https://github.com/covao/DonkeyCopilot/blob/main/copilot.html)
+- [p5.min.js](https://github.com/covao/DonkeyCopilot/blob/main/p5.min.js)
 
 # Usage
 1. Start DonkeyCar.
