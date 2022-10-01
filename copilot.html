@@ -1,18 +1,18 @@
 <html>
 <head>
 <style>
-html,body,main {
-	margin: 0;
-  	overscroll-behavior: none;
-	overflow: hidden;
-	height 100%;
-}
-input[type="range"]::-webkit-slider-thumb {
-	-webkit-appearance: none; 
-	background: #70ad47; 
-	width: 20%; 
-	height: 80%; 
-	border-radius: 30%;
+	html,body,main {
+		margin: 0;
+		overscroll-behavior: none;
+		overflow: hidden;
+		height 100%;
+	}
+	input[type="range"]::-webkit-slider-thumb {
+		-webkit-appearance: none; 
+		background: #70ad47; 
+		width: 20%; 
+		height: 80%; 
+		border-radius: 30%;
 </style>
 <script src="./p5.min.js"></script>
 </head>
@@ -46,12 +46,11 @@ function setup(){
 	xSlider.elt.addEventListener('change', ReleaseX);
 
 	// Create full dcreen button
-	buttonFS= createButton('FS');
+	buttonFS= createButton('Full Screen');
 	buttonFS.elt.style.borderRadius='20px';
 	buttonFS.elt.style.color='#000000';
 	buttonFS.elt.backgroundColor='#696969';
 	buttonFS.elt.style.opacity=0.5;
-	buttonFS.elt.style.fontSize='32';
 	buttonFS.mousePressed(changeFS);
 
 	// create Rec button
@@ -62,12 +61,20 @@ function setup(){
 	buttonRec.elt.style.opacity=0.5;
 	buttonRec.mousePressed(changeREC);
 
+	// create Auto Rec button
+	buttonARec = createButton('Auto REC');
+	buttonARec.elt.style.borderRadius='20px';
+	buttonARec.elt.style.color='#000000';
+	buttonARec.elt.backgroundColor='#696969';
+	buttonARec.elt.style.opacity=0.5;
+	buttonARec.mousePressed(changeAREC);
+
 	// create AutoPilot button
 	buttonDM = createButton('Manual');
 	buttonDM.elt.style.borderRadius='20px';
 	buttonDM.elt.style.color='#000000';
-	buttonDM.elt.backgroundColor='#696969';
 	buttonDM.elt.style.opacity=0.5;
+	buttonDM.elt.backgroundColor='#70ad47';
 	buttonDM.mousePressed(changeDM);
 
 	// create Set Max accel button
@@ -84,6 +91,7 @@ function setup(){
 	AccelStep = 0.05;
 	SteeringStep = 0.05;
 	RecSW = false;
+	ARecSW = false;
 	MaxAccel = 100;
 
 	sc=(windowWidth/1920); //Screen Scale
@@ -96,11 +104,6 @@ function setup(){
 	    event.preventDefault();
 	});
 
-	//	socket.onmessage = function (event) {
-	//		console.log(event.data);
-	//	}
-	//frameRate(20);
-
 }
 
 function draw() { //Draw Loop
@@ -112,7 +115,7 @@ function draw() { //Draw Loop
 	//Get GamePad state
 	Pads = navigator.getGamepads(); 
 	if (Pads[0]){ //If existing GamePad
-		deadband=0.05
+		deadband=0.05;
     	AnalogX =  Pads[0].axes[2];
 		if (abs(AnalogX)<deadband){
 			AnalogX = 0;
@@ -162,15 +165,18 @@ function draw() { //Draw Loop
 	xSlider.size(400*sc,200*sc);
 
   	//Set Button UI
-	buttonFS.position(1800*sc, 10*sc);//Auto/Manual 
-	buttonFS.size(100*sc,120*sc);
-	buttonFS.elt.style.fontSize=48*sc;
+	buttonFS.position(1750*sc, 10*sc);//Auto/Manual 
+	buttonFS.size(150*sc,100*sc);
+	buttonFS.elt.style.fontSize=32*sc;
 	buttonDM.position(550*sc, 750*sc);
 	buttonDM.size(700*sc,100*sc);
 	buttonDM.elt.style.fontSize=48*sc;
 	buttonRec.position(1500*sc, 10*sc);//Auto/Manual 
 	buttonRec.size(200*sc,100*sc);
 	buttonRec.elt.style.fontSize=48*sc;
+	buttonARec.position(1250*sc, 10*sc);//Auto/Manual 
+	buttonARec.size(200*sc,100*sc);
+	buttonARec.elt.style.fontSize=32*sc;
 	buttonSA.position(1100*sc, 600*sc);//Auto/Manual 
 	buttonSA.size(150*sc,100*sc);
 	buttonSA.elt.style.fontSize=32*sc;
@@ -196,19 +202,24 @@ function draw() { //Draw Loop
 	fill(200);
  	textAlign(CENTER,CENTER);
 	textStyle(ITALIC);
-	textSize(48*sc);
+	textSize(54*sc);
 	text('Donkey Copilot' ,900*sc, 50*sc);
-	textSize(20*sc);
-	strokeWeight(2);
-	text('Powered by TatamiRacer' ,980*sc, 100*sc);
+	textSize(28*sc);
+	strokeWeight(3);
+	text('Powered by TatamiRacer' ,900*sc, 100*sc);
 	pop();
 	
-	// Display FPS / MAX Accel
+	// Display FPS / MAX Accel /GamePad
 	push();
-	textSize(48*sc);
-	text("FPS "+str(int(frameRate())) ,150*sc, 22*sc);
+	textSize(32*sc);
+	text("FPS "+str(int(frameRate())) ,150*sc, 40*sc);
+	if (Pads[0]){ //If existing GamePad
+		text('GamePad' ,350*sc, 40*sc);
+	}
 	text(str(MaxAccel) ,1170*sc, 570*sc);
 	pop();
+
+	//
 
 	lv = ySlider.value()*100;//Slider Level
 	if(abs(lv)>MaxAccel){
@@ -230,16 +241,16 @@ function draw() { //Draw Loop
 
 		noFill();
 		strokeCap(SQUARE);
-		strokeWeight(40);
+		strokeWeight(40*sc);
 		stroke(0, 255, 0, 200);
 		arc(900*sc, 650*sc, 320*sc, 200*sc, PI, PI+PI*abs(lv)*0.01);//Low Accel
-		if(abs(lv)>50){//Mid Accel
+		if(abs(lv)>40){//Mid Accel
 			stroke(255, 255, 0, 200);
-			arc(900*sc, 650*sc, 320*sc, 200*sc, PI+PI*0.5, PI+PI*abs(lv)*0.01);
+			arc(900*sc, 650*sc, 320*sc, 200*sc, PI+PI*0.4, PI+PI*abs(lv)*0.01);
 		}
-		if(abs(lv)>80){//High Accel
+		if(abs(lv)>70){//High Accel
 			stroke(255,0,0, 200);
-			arc(900*sc, 650*sc, 320*sc, 200*sc, PI+PI*0.8, PI+PI*abs(lv)*0.01);
+			arc(900*sc, 650*sc, 320*sc, 200*sc, PI+PI*0.7, PI+PI*abs(lv)*0.01);
 		}
 		pop();
 
@@ -247,18 +258,31 @@ function draw() { //Draw Loop
 		push();
 		strokeWeight(2);
 		translate(900*sc, 200*sc);
-
 		textStyle(NORMAL);
-		textSize(40*sc);
+		textSize(48*sc);
 		text(int (xSlider.value()*100),0*sc, 50*sc);
-		stroke(0, 150, 0, 140);
+		stroke(112, 173, 71, 255);
 		noFill();
 		arc(0, 0, 180*sc, 150*sc, PI, PI/2+PI*1.5);
-		fill(0, 150, 0, 100);
+		fill(112, 173, 71, 150);//#70ad47
 		rotate((PI /5) * xSlider.value());
 		translate(0, -30*sc);
 		triangle(0, -40*sc, -20*sc, 40*sc, 20*sc, 40*sc);
 		pop();
+	}
+
+	//Recording
+	if(ARecSW){  //Auto Recording
+		if (abs(lv)>0){
+			RecSW = true;
+		}else{ 
+			RecSW = false;
+		}
+	}
+	if(RecSW){
+		buttonRec.elt.style.backgroundColor='#dc143c';
+	}else{
+		buttonRec.elt.style.backgroundColor='#ffffff';
 	}
 
 	//Send message to DonkeyCar
@@ -287,17 +311,24 @@ function changeDM(){ //Drive mode button
 	if(DM=="local" || DM=='local_angle'){
 		DM='user';
 		buttonDM.elt.textContent="Manual"
+		buttonDM.elt.style.backgroundColor='#ffffff';
 	}else{
 		DM='local';
 		buttonDM.elt.textContent="Auto"
+		buttonDM.elt.style.backgroundColor='#ffa500';
 	}
 }
 function changeREC(){ //Rec button
-	RecSW=!RecSW;
-	if(RecSW){
-		buttonRec.elt.style.backgroundColor='#dc143c';
+	if(!ARecSW){ //AutoRec
+		RecSW=!RecSW;
+	}
+}
+function changeAREC(){ //Auto Rec button
+	ARecSW=!ARecSW;
+	if(ARecSW){
+		buttonARec.elt.style.backgroundColor='#dc143c';
 	}else{
-		buttonRec.elt.style.backgroundColor='#ffffff';
+		buttonARec.elt.style.backgroundColor='#ffffff';
 	}
 }
 function changeSA(){ //Set Max accel level
