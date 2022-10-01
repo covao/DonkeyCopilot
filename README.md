@@ -10,13 +10,13 @@
 # Installation
 ## Copy by manually
 Copy two files into following project folder.  
-~/donkeycar/donkeycar/parts/web_controller/templates/static
+~/projects/donkeycar/donkeycar/parts/web_controller/templates/static
 - [copilot.html](https://github.com/covao/DonkeyCopilot/blob/main/copilot.html)
 - [p5.min.js](https://github.com/covao/DonkeyCopilot/blob/main/p5.min.js)
 
-## Copy by command from raspberry pi terminal
+## Copy command from raspberry pi terminal
 ```
-cd ~/donkeycar/donkeycar/parts/web_controller/templates/static
+cd ~/projects/donkeycar/donkeycar/parts/web_controller/templates/static
 wget "https://raw.githubusercontent.com/covao/DonkeyCopilot/main/copilot.html"  -O "copilot.html"
 wget "https://raw.githubusercontent.com/covao/DonkeyCopilot/main/p5.min.js"  -O "p5.min.js"
 
