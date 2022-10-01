@@ -24,8 +24,8 @@ wget "https://raw.githubusercontent.com/covao/DonkeyCopilot/main/p5.min.js"  -O 
 
 
 # Usage
-1. Start DonkeyCar.
-https://docs.donkeycar.com/guide/get_driving/
+1. Start DonkeyCar. 
+参考 https://docs.donkeycar.com/guide/get_driving/
 
 2. Enter following URL from browser.  
 <your car's hostname>:8887/static/copilot.html
