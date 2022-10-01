@@ -8,13 +8,13 @@
 - Easy to install with no code modifications.
 
 # Installation
-## Method1: Copy files by manually
+## Method 1: Copy files by manually
 Copy two files into the following project.  
 ~/projects/donkeycar/donkeycar/parts/web_controller/templates/static
 - [copilot.html](https://github.com/covao/DonkeyCopilot/blob/main/copilot.html)
 - [p5.min.js](https://github.com/covao/DonkeyCopilot/blob/main/p5.min.js)
 
-## Method2: Command from raspberry pi terminal
+## Method 2: Command from raspberry pi terminal
 ```
 cd ~/projects/donkeycar/donkeycar/parts/web_controller/templates/static
 wget "https://raw.githubusercontent.com/covao/DonkeyCopilot/main/copilot.html"  -O "copilot.html"
