@@ -287,10 +287,8 @@ function draw() { //Draw Loop
 		buttonRec.elt.style.backgroundColor='#ffffff';
 	}
 	if(DM=="local" || DM=='local_angle'){
-		buttonDM.elt.textContent="Manual"
 		buttonDM.elt.style.backgroundColor='#70ad47';
 	}else{
-		buttonDM.elt.textContent="Auto"
 		buttonDM.elt.style.backgroundColor='#ffa500';
 	}
 
@@ -319,8 +317,10 @@ function changeFS(){ //Full screen button
 function changeDM(){ //Drive mode button
 	if(DM=="local" || DM=='local_angle'){
 		DM='user';
+		buttonDM.elt.textContent="Manual"
 	}else{
 		DM='local';
+		buttonDM.elt.textContent="Auto"
 	}
 }
 function changeREC(){ //Rec button
