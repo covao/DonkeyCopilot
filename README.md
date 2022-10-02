@@ -2,7 +2,7 @@
 [日本語 Japanese(Google Translate)](https://github-com.translate.goog/covao/DonkeyCopilot/blob/main/README.md?_x_tr_sl=en&_x_tr_tl=ja&_x_tr_hl=ja&_x_tr_pto=wapp)  
 
 "DonkeyCopilot" is WEB controller application for [DonkeyCar](https://docs.donkeycar.com/). 
-- Browser based UI suitable for smartphone or tablet
+- Browser based UI suitable for smartphone and tablet
 - Easy to switch between manual and automatic driving.
 - Can be operated using a gamepad. (HTML5 GamePad API)
 - Easy to install with no code modifications.  
@@ -38,3 +38,4 @@ For details please See https://docs.donkeycar.com/guide/get_driving/
 
 # Referrence 
 - [p5.js library](https://p5js.org/download/)
+- [Donkey Car](https://docs.donkeycar.com/)
