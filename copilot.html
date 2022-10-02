@@ -45,19 +45,18 @@ function setup(){
 	xSlider.elt.style.backgroundColor='#696969';
 	xSlider.elt.addEventListener('change', ReleaseX);
 
-	// Create full dcreen button
+	// Create full screen button
 	buttonFS= createButton('Full Screen');
 	buttonFS.elt.style.borderRadius='20px';
 	buttonFS.elt.style.color='#000000';
-	buttonFS.elt.backgroundColor='#696969';
+	buttonFS.elt.style.backgroundColor='#fffffff';
 	buttonFS.elt.style.opacity=0.5;
 	buttonFS.mousePressed(changeFS);
 
 	// create Rec button
 	buttonRec = createButton('REC');
 	buttonRec.elt.style.borderRadius='20px';
-	buttonRec.elt.style.color='#000000';
-	buttonRec.elt.backgroundColor='#696969';
+	buttonRec.elt.style.color='#0000000';
 	buttonRec.elt.style.opacity=0.5;
 	buttonRec.mousePressed(changeREC);
 
@@ -65,7 +64,7 @@ function setup(){
 	buttonARec = createButton('Auto REC');
 	buttonARec.elt.style.borderRadius='20px';
 	buttonARec.elt.style.color='#000000';
-	buttonARec.elt.backgroundColor='#696969';
+	buttonARec.elt.style.backgroundColor='#ffffff';
 	buttonARec.elt.style.opacity=0.5;
 	buttonARec.mousePressed(changeAREC);
 
@@ -74,14 +73,14 @@ function setup(){
 	buttonDM.elt.style.borderRadius='20px';
 	buttonDM.elt.style.color='#000000';
 	buttonDM.elt.style.opacity=0.5;
-	buttonDM.elt.backgroundColor='#70ad47';
+	buttonDM.elt.style.backgroundColor='#70ad47';
 	buttonDM.mousePressed(changeDM);
 
 	// create Set Max accel button
 	buttonSA = createButton('Set Max');
 	buttonSA.elt.style.borderRadius='20px';
 	buttonSA.elt.style.color='#000000';
-	buttonSA.elt.backgroundColor='#696969';
+	buttonSA.elt.style.backgroundColor='#ffffff';
 	buttonSA.elt.style.opacity=0.5;
 	buttonSA.touchStarted(changeSA);
 
@@ -211,7 +210,7 @@ function draw() { //Draw Loop
 	
 	// Display FPS / MAX Accel /GamePad
 	push();
-	textSize(32*sc);
+	textSize(40*sc);
 	text("FPS "+str(int(frameRate())) ,150*sc, 40*sc);
 	if (Pads[0]){ //If existing GamePad
 		text('GamePad' ,350*sc, 40*sc);
@@ -244,13 +243,13 @@ function draw() { //Draw Loop
 		strokeWeight(40*sc);
 		stroke(0, 255, 0, 200);
 		arc(900*sc, 650*sc, 320*sc, 200*sc, PI, PI+PI*abs(lv)*0.01);//Low Accel
-		if(abs(lv)>40){//Mid Accel
+		if(abs(lv)>=40){//Mid Accel
 			stroke(255, 255, 0, 200);
 			arc(900*sc, 650*sc, 320*sc, 200*sc, PI+PI*0.4, PI+PI*abs(lv)*0.01);
 		}
-		if(abs(lv)>70){//High Accel
+		if(abs(lv)>=80){//High Accel
 			stroke(255,0,0, 200);
-			arc(900*sc, 650*sc, 320*sc, 200*sc, PI+PI*0.7, PI+PI*abs(lv)*0.01);
+			arc(900*sc, 650*sc, 320*sc, 200*sc, PI+PI*0.8, PI+PI*abs(lv)*0.01);
 		}
 		pop();
 
@@ -311,7 +310,7 @@ function changeDM(){ //Drive mode button
 	if(DM=="local" || DM=='local_angle'){
 		DM='user';
 		buttonDM.elt.textContent="Manual"
-		buttonDM.elt.style.backgroundColor='#ffffff';
+		buttonDM.elt.style.backgroundColor='#70ad47';
 	}else{
 		DM='local';
 		buttonDM.elt.textContent="Auto"
@@ -328,7 +327,7 @@ function changeAREC(){ //Auto Rec button
 	if(ARecSW){
 		buttonARec.elt.style.backgroundColor='#dc143c';
 	}else{
-		buttonARec.elt.style.backgroundColor='#ffffff';
+		buttonARec.elt.style.backgroundColor='#696969';
 	}
 }
 function changeSA(){ //Set Max accel level
