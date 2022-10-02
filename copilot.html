@@ -279,10 +279,19 @@ function draw() { //Draw Loop
 			RecSW = false;
 		}
 	}
+
+	// Button Color
 	if(RecSW){
 		buttonRec.elt.style.backgroundColor='#dc143c';
 	}else{
 		buttonRec.elt.style.backgroundColor='#ffffff';
+	}
+	if(DM=="local" || DM=='local_angle'){
+		buttonDM.elt.textContent="Manual"
+		buttonDM.elt.style.backgroundColor='#70ad47';
+	}else{
+		buttonDM.elt.textContent="Auto"
+		buttonDM.elt.style.backgroundColor='#ffa500';
 	}
 
 	//Send message to DonkeyCar
@@ -310,12 +319,8 @@ function changeFS(){ //Full screen button
 function changeDM(){ //Drive mode button
 	if(DM=="local" || DM=='local_angle'){
 		DM='user';
-		buttonDM.elt.textContent="Manual"
-		buttonDM.elt.style.backgroundColor='#70ad47';
 	}else{
 		DM='local';
-		buttonDM.elt.textContent="Auto"
-		buttonDM.elt.style.backgroundColor='#ffa500';
 	}
 }
 function changeREC(){ //Rec button
