@@ -8,7 +8,7 @@
 - Can be operated using a gamepad. (HTML5 GamePad API)
 - Easy to install with no code modifications.  
 
-## Controller UI Demo [>Link](https://covao.github.io/DonkeyCopilot/copilot.html?demo)  
+## Controller UI Demo [>Start Demo](https://covao.github.io/DonkeyCopilot/copilot.html?demo)  
 
 ![Donkey Copilot](img/DonkeyCopilot_demo.gif)
 
