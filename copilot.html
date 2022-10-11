@@ -23,8 +23,24 @@
 
 <script>
 function setup(){
-	//raspIP='192.168.0.101:8887'; //For debug on host pc
-	raspIP=location.host;
+	URLparam = location.search;//URL Parameter
+	if(URLparam.match(/demo/)=='demo'){
+		demoMode=true;
+		V1 = createVideo('./tub_movie_mft2022_1.mp4',function (){//Demo Video
+			V1.hide();
+			V1.volume(0);
+			V1.pause();
+			V1.loop();
+		});
+	}else{
+		demoMode=false;
+	}
+	tmp = URLparam.match(/ip=([0-9a-z\.\:]+).*$/,"$1");//IP address+port for debug
+	if(tmp){
+		raspIP=tmp[1]; //For debug on host pc
+	}else{
+		raspIP=location.host;//For Raspberry Pi
+	}
 
 	document.body.style.overflow = "hidden";
 	document.body.style.height = "100%";
@@ -93,25 +109,40 @@ function setup(){
 	RecSW = false;
 	ARecSW = false;
 	MaxAccel = 100;
+	maxAsp = 2.22;//Max aspect
 
 	sc=(windowWidth/1920); //Screen Scale
 	canv=createCanvas(windowWidth, windowHeight);
-	img = new Image();
-	img.src ='http://'+raspIP+'/video';
-
-	socket = new WebSocket('ws://'+raspIP+'/wsDrive');
+	if(!demoMode){
+		img = new Image();
+		img.src ='http://'+raspIP+'/video';
+		socket = new WebSocket('ws://'+raspIP+'/wsDrive');
+	}
 	window.addEventListener('touchmove', function(event) {
-	    event.preventDefault();
+			event.preventDefault();
 	});
-
 }
 
 function draw() { //Draw Loop
 	// Display video
 	background(0);
-	let ctx = canv.canvas.getContext("2d");
-	ctx.drawImage(img,0 , 0,img.width,img.height, 00*sc, 0, 1920*sc, 1080*sc);
-
+	if(demoMode){//Demo movie
+		xOffset = 20+Math.round(xSlider.value()*20.0);
+		image(V1,0,0,1920*sc, 1080*sc,xOffset,0,V1.width-40,V1.height);
+		var spd;
+		if(DM!="local"){
+			spd = Math.abs(Math.round(ySlider.value()*10.0)/10.0);
+			if(spd<0.5){
+				spd = spd*3.0;
+			}
+		}else{
+			spd = 1.0;
+		}
+		V1.speed(spd);
+	}else{
+		let ctx = canv.canvas.getContext("2d");
+		ctx.drawImage(img,0 , 0,img.width,img.height, 0*sc, 0, 1920*sc, 1080*sc);
+	}
 	//Get GamePad state
 	Pads = navigator.getGamepads(); 
 	if (Pads[0]){ //If existing GamePad
@@ -297,9 +328,11 @@ function draw() { //Draw Loop
 	'throttle':lv/100, //Accel(-1..+1)
 	'drive_mode': DM, //user|local|local_angle
 	'recording': RecSW}) //true|false
-	try{
-		socket.send(data);
-	}catch{
+	if(!demoMode){
+		try{
+			socket.send(data);
+		}catch{
+		}
 	}
 }
 
@@ -345,8 +378,12 @@ function changeSA(){ //Set Max accel level
 }
 
 function windowResized() { // Resize
+	asp=windowWidth/windowHeight;//Aspect ratio
 	resizeCanvas(windowWidth, windowHeight);
-	sc=(windowWidth/1920);
+	sc=(windowWidth/1920);// Screen scale factor
+	if(asp>maxAsp){
+		sc=sc*(windowHeight/windowWidth)*maxasp;
+	};
 }
 
 </script>
