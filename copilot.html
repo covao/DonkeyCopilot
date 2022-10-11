@@ -132,17 +132,16 @@ function draw() { //Draw Loop
 		ctx.drawImage(V1,xOffset,0,V1.videoWidth-40,V1.videoHeight, 0,0,1920*sc, 1080*sc);
 		var spd;
 		if(DM!="local"){
-			spd = Math.abs(Math.round(ySlider.value()*10.0)/10.0);
-			if(spd<0.5){
-				spd = spd*3.0;
-			}
+			spd = Math.round(ySlider.value()*10.0)/10.0;
 		}else{
 			spd = 1.0;
 		}
-		if(spd>0 && V1.currentTime==0){
-			V1.play();
+		if(spd!=0.0 && frameRate()>0){
+			V1.currentTime = V1.currentTime+spd/frameRate();
 		}
-		V1.playbackRate=spd;
+		if(V1.currentTime>V1.duration){
+			V1.currentTime = 0;
+		}
 	}else{
 		let ctx = canv.canvas.getContext("2d");
 		ctx.drawImage(img,0 , 0,img.width,img.height, 0, 0, 1920*sc, 1080*sc);
