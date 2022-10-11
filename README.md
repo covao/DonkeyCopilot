@@ -1,4 +1,5 @@
 # <code>Donkey Copilot</code>
+
 [日本語 Japanese(Google Translate)](https://github-com.translate.goog/covao/DonkeyCopilot/blob/main/README.md?_x_tr_sl=en&_x_tr_tl=ja&_x_tr_hl=ja&_x_tr_pto=wapp)  
 
 "DonkeyCopilot" is WEB controller application for [DonkeyCar](https://docs.donkeycar.com/). 
@@ -6,6 +7,8 @@
 - Easy to switch between manual and automatic driving.
 - Can be operated using a gamepad. (HTML5 GamePad API)
 - Easy to install with no code modifications.  
+
+## Controller UI Demo [>Link](https://covao.github.io/DonkeyCopilot/copilot.html?demo)  
 
 ![Donkey Copilot](img/DonkeyCopilot_demo.gif)
 
