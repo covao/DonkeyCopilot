@@ -136,7 +136,7 @@ function draw() { //Draw Loop
 		}else{
 			spd = 1.0;
 		}
-		if(spd!=0.0 && frameRate()>0 && V1.readyState>=4){
+		if(spd!=0.0 && frameRate()>0 && V1.readyState>=3){
 			V1.currentTime = V1.currentTime+spd/frameRate();
 		}
 		if(V1.currentTime>=V1.duration){
