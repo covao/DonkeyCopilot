@@ -41,4 +41,4 @@ For details please See https://docs.donkeycar.com/guide/get_driving/
 
 # Referrence 
 - [p5.js library](https://p5js.org/download/)
-- [Donkey Car](https://docs.donkeycar.com/)
+- [DonkeyCar](https://docs.donkeycar.com/)
