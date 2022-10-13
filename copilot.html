@@ -101,7 +101,7 @@ function setup(){
 	buttonSA.elt.style.opacity=0.5;
 	buttonSA.touchStarted(changeSA);
 
-	DM='user';// manual
+	DM='user';// user|local|local_angle
 	ButtonX0 = false;
 	ButtonB0 = false;
 	AccelStep = 0.05;
@@ -258,8 +258,8 @@ function draw() { //Draw Loop
 		lv = Math.sign(lv)*abs(MaxAccel);
 	}
 	
-	if(DM=='user'){ //Manual mode
-		//Accel
+	if(DM=='user'|| DM=='local_angle'){ //Manual mode or Auto Steering
+		//Accel Guage
 		push();
 		textStyle(NORMAL);
 		textSize(98*sc);
@@ -285,8 +285,10 @@ function draw() { //Draw Loop
 			arc(900*sc, 650*sc, 320*sc, 200*sc, PI+PI*0.8, PI+PI*abs(lv)*0.01);
 		}
 		pop();
+	}
 
-		// Direction UI
+	if(DM=='user'){ //Manual mode
+		// Direction Guage
 		push();
 		strokeWeight(2);
 		translate(900*sc, 200*sc);
@@ -367,7 +369,7 @@ function changeAREC(){ //Auto Rec button
 	if(ARecSW){
 		buttonARec.elt.style.backgroundColor='#dc143c';
 	}else{
-		buttonARec.elt.style.backgroundColor='#696969';
+		buttonARec.elt.style.backgroundColor='#ffffff';
 	}
 }
 function changeSA(){ //Set Max accel level
@@ -381,9 +383,10 @@ function changeSA(){ //Set Max accel level
 function windowResized() { // Resize
 	asp=windowWidth/windowHeight;//Aspect ratio
 	resizeCanvas(windowWidth, windowHeight);
-	sc=(windowWidth/1920);// Screen scale factor
-	if(asp>maxAsp){
-		sc=sc*(windowHeight/windowWidth)*maxasp;
+	if(asp<=maxAsp){ // Screen scale factor
+		sc = windowWidth/1920;
+	}else{
+		sc = (windowWidth/1920)/(asp/maxAsp);
 	};
 }
 
